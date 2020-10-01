@@ -13,17 +13,17 @@ public class JourneyDto {
     @JsonProperty("ride_count")
     Integer rideCount;
 
-    @JsonProperty("duration_m")
-    Integer duration;
+    @JsonProperty("timestamp")
+    Date date;
 
     @JsonProperty("distance_m")
     Integer distance;
 
+    @JsonProperty("duration_m")
+    Integer duration;
+
     @JsonProperty("carbon_g")
     Integer carbon;
-
-    @JsonProperty("timestamp")
-    Date date;
 
     @JsonProperty("country")
     String country;

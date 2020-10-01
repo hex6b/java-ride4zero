@@ -9,11 +9,11 @@ import lombok.Data;
 @AllArgsConstructor
 public class TotalDto {
     @JsonProperty("ride_count")
-    Integer rideCount;
+    Integer totalRideCount;
 
     @JsonProperty("distance_m")
-    Integer distance;
+    Integer totalDistance;
 
     @JsonProperty("carbon_g")
-    Integer carbon;
+    Integer totalCarbon;
 }

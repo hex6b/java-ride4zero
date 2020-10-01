@@ -5,26 +5,24 @@ import com.ride4zero.backend.model.JourneyDto;
 import com.ride4zero.backend.model.TotalDto;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 public class MainController {
 
     @Autowired
-    BackendApplication backendApplication;
+    BackendApplication stravaService;
 
-    @Value("${strava.token}")
-    private String token;
-
-    @GetMapping("/")
+    @GetMapping("/totals")
     public TotalDto getHello() {
-        return backendApplication.getTotals();
+        return stravaService.getTotals();
     }
 
     @GetMapping("/journeys")
-    public JourneyDto getJourneys() {
-        return backendApplication.getJourneys();
+    public List<JourneyDto> getJourneys() {
+        return stravaService.getJourneys();
     }
 }
