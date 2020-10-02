@@ -7,22 +7,22 @@ import lombok.Data;
 @Data
 public class StravaActivity {
     @JsonProperty("resource_state")
-    public Integer resourceState;
-    public Athlete athlete;
-    public String name;
-    public Float distance;
+    private Integer resourceState;
+    private Athlete athlete;
+    private String name;
+    private Float distance;
 
     @JsonProperty("moving_time")
-    public Integer movingTime;
+    private Integer movingTime;
 
     @JsonProperty("elapsed_time")
-    public Integer elapsedTime;
+    private Integer elapsedTime;
 
     @JsonProperty("total_elevation_gain")
-    public Float totalElevationGain;
+    private Float totalElevationGain;
 
-    public String type;
+    private String type;
 
     @JsonProperty("workout_type")
-    public Integer workoutType;
+    private Integer workoutType;
 }

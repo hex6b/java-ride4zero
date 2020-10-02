@@ -19,23 +19,23 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Journey {
     @Id
-    String uid;
+    private String uid;
 
     @Column(name = "end_time")
-    Date date;
+    private Date date;
 
     @Column(name = "distance")
-    Integer distance;
+    private Integer distance;
 
     @Column(name = "duration")
-    Integer duration;
+    private Integer duration;
 
     @Column(name = "co2")
-    Integer carbon;
+    private Float carbon;
 
     @Column(name = "country")
-    String country;
+    private String country;
 
     @Column(name = "cycle_events")
-    Integer cycleEvents;
+    private Integer cycleEvents;
 }

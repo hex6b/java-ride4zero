@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Total {
     @Id
-    UUID uid;
+    Integer uid;
 
     @Column(name = "ride_count")
     Integer totalRideCount;
@@ -27,5 +27,5 @@ public class Total {
     Integer totalDistance;
 
     @Column(name = "carbon_g")
-    Integer totalCarbon;
+    Float totalCarbon;
 }

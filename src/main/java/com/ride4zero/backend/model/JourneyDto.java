@@ -11,20 +11,20 @@ import lombok.Data;
 @AllArgsConstructor
 public class JourneyDto {
     @JsonProperty("ride_count")
-    Integer rideCount;
+    private Integer rideCount;
 
     @JsonProperty("timestamp")
-    Date date;
+    private Date date;
 
     @JsonProperty("distance_m")
-    Integer distance;
+    private Integer distances;
 
     @JsonProperty("duration_m")
-    Integer duration;
+    private Integer durations;
 
     @JsonProperty("carbon_g")
-    Integer carbon;
+    private Float carbon;
 
     @JsonProperty("country")
-    String country;
+    private String country;
 }

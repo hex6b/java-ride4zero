@@ -2,10 +2,12 @@ package com.ride4zero.backend;
 
 import com.ride4zero.backend.client.StravaApi;
 import com.ride4zero.backend.entity.Journey;
+import com.ride4zero.backend.entity.Total;
 import com.ride4zero.backend.model.JourneyDto;
 import com.ride4zero.backend.model.StravaActivity;
 import com.ride4zero.backend.model.TotalDto;
 import com.ride4zero.backend.repository.JourneyRepository;
+import com.ride4zero.backend.repository.TotalRepository;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,69 +37,71 @@ public class BackendApplication {
 	@Autowired
 	JourneyRepository journeyRepository;
 
+	@Autowired
+	TotalRepository totalRepository;
+
 	public TotalDto getTotals() {
 		log.info("getTotals called");
-		//fetchAndStoreStravaActivies();
-		return new TotalDto(1, 2, 3);
+		return new TotalDto(totalRepository.findById(1).get());
 	}
 
 	public List<JourneyDto> getJourneys() {
-		return mapFromSchema(fetchAndStoreStravaActivies());
+		return mapToDto(fetchStravaActivies());
 	}
 
-	private List<Journey> fetchAndStoreStravaActivies() {
+	private List<StravaActivity> fetchStravaActivies() {
 		List<StravaActivity> allActivities = stravaApi.getAllActivities("Bearer "
 				+ stravaToken);
-		return journeyRepository.saveAll(mapToSchema(allActivities));
+		log.info(allActivities.size() + " ACTIVITIES="+ ArrayUtils.toString(allActivities));
+		updateTotals(allActivities);
+		return allActivities;
 	}
 
-	private List<Journey> mapToSchema(List<StravaActivity> activities) {
-		System.out.println(activities.size() + " ENTRIES="+ArrayUtils.toString(activities));
-		List<Journey> journeys = new ArrayList<>();
-		for (StravaActivity a : activities) {
-			if (a.getType().equals("Ride")) {
-				System.out.println("SAVING RECORD="+a.getName());
-				int d = normaliseDistance(a.getDistance());
-				journeys.add(new Journey(
-						generateId(a.getElapsedTime(), d, a.getName()),
-						new Date(),
-						d,
-						a.getElapsedTime(),
-						calculateCarbon(d),
-						"UK",
-						1)
-						);
-			}
-		}
-		return journeys;
-	}
+	private void updateTotals(List<StravaActivity> allActivities) {
+		Total totals = totalRepository.findById(1).get();
 
-	private List<JourneyDto> mapFromSchema(List<Journey> fromStrava) {
-		List<JourneyDto> journeys = new ArrayList<>();
+		int rideCount = totals.getTotalRideCount();
+		int distance = totals.getTotalDistance();
+		Float carbonCount = totals.getTotalCarbon();
 
-		for (Journey j : fromStrava) {
-//			journeys.add(new JourneyDto(
-//					j.get
-//			))
+		for (StravaActivity activity : allActivities) {
+			rideCount += 1;
+			distance += normaliseDistance(activity.getDistance());
+			carbonCount += calculateCarbon(normaliseDistance(activity.getDistance()));
 		}
 
-		return journeys;
+		totals.setTotalRideCount(rideCount);
+		totals.setTotalDistance(distance);
+		totals.setTotalCarbon(carbonCount);
 	}
 
-	private String generateId(Integer elapsedTime, Integer distance, String name) {
-		return elapsedTime + "-" + distance + name.hashCode();
-	}
+	private List<JourneyDto> mapToDto(List<StravaActivity> activities) {
+		List<JourneyDto> res = new ArrayList<>();
 
-	private int calculateCarbon(int distance) {
-		return new Random().nextInt(); //todo real calc here
+		int rideCount = 0;
+		int distance = 0;
+		int duration = 0;
+		float carbon = 0.0F;
+
+		for (StravaActivity activity : activities) {
+			rideCount += 1;
+			distance += normaliseDistance(activity.getDistance());
+			duration += activity.getElapsedTime();
+			carbon += calculateCarbon(normaliseDistance(activity.getDistance()));
+		}
+		res.add(new JourneyDto(rideCount, new Date(), distance, duration, carbon, "UK"));
+		return res;
 	}
 
 	private int normaliseDistance(Float d) {
 		return Math.round(d) /1000;
 	}
 
+	private Float calculateCarbon(int distance) {
+		return new Random().nextFloat(); //todo real calc here
+	}
+
 	public static void main(String[] args) {
 		SpringApplication.run(BackendApplication.class, args);
 	}
-
 }
