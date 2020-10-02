@@ -10,18 +10,23 @@ import com.ride4zero.backend.repository.JourneyRepository;
 import com.ride4zero.backend.repository.TotalRepository;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Random;
 
 import lombok.extern.slf4j.Slf4j;
+
+import static java.util.Objects.nonNull;
 
 @Slf4j
 @EnableFeignClients
@@ -52,16 +57,7 @@ public class BackendApplication {
 	}
 
 	public List<JourneyDto> getJourneys() {
-		if (isDemo) {
-//			return mapToDto();
-		} else {
-		}
 		return mapToDto(fetchStravaActivies());
-	}
-
-	private List<JourneyDto> streamDemoData() {
-		journeyRepository.findAll();
-		return null;
 	}
 
 	private List<StravaActivity> fetchStravaActivies() {
@@ -125,7 +121,7 @@ public class BackendApplication {
 					calculateCarbon(distance),
 					"UK", 1) );
 			if (a.getType().equals("Ride")) {
-				System.out.println("SAVING RECORD="+a.getName());
+				System.out.println("RECORD="+a.getName());
 				int d = normaliseDistance(a.getDistance());
 				journeys.add(new Journey(
 						generateId(a.getElapsedTime(), d, a.getName()),
@@ -158,5 +154,29 @@ public class BackendApplication {
 
 	public void play() {
 
+	}
+
+	private void updateTotalsWithDemo() {
+
+	}
+
+	private List<JourneyDto> streamDemoData() {
+		List<Journey> journeys = journeyRepository.findAll();
+
+		String string = "2020-08-31 12:00:00.000";
+		DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.ENGLISH);
+		Date date = null;
+		try {
+			date = format.parse(string);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+
+		for (Journey journey : journeys) {
+			if (nonNull(date) && journey.getTimestamp().after(date)) {
+				log.info(journey.toString());
+			}
+		}
+		return null;
 	}
 }

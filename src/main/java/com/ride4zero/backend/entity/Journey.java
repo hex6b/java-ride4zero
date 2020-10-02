@@ -22,7 +22,7 @@ public class Journey {
     private String uid;
 
     @Column(name = "end_time")
-    private Date date;
+    private Date timestamp;
 
     @Column(name = "distance")
     private Integer distance;
