@@ -28,17 +28,23 @@ import lombok.extern.slf4j.Slf4j;
 @SpringBootApplication
 public class BackendApplication {
 
-	@Autowired
+	private boolean isDemo;
+
 	StravaApi stravaApi;
 
 	@Value("${strava.token}")
 	private String stravaToken;
 
-	@Autowired
 	JourneyRepository journeyRepository;
 
-	@Autowired
 	TotalRepository totalRepository;
+
+	public BackendApplication(StravaApi stravaApi, JourneyRepository journeyRepository, TotalRepository totalRepository) {
+		this.isDemo = false;
+		this.stravaApi = stravaApi;
+		this.journeyRepository = journeyRepository;
+		this.totalRepository = totalRepository;
+	}
 
 	public TotalDto getTotals() {
 		log.info("getTotals called");
@@ -46,7 +52,16 @@ public class BackendApplication {
 	}
 
 	public List<JourneyDto> getJourneys() {
+		if (isDemo) {
+//			return mapToDto();
+		} else {
+		}
 		return mapToDto(fetchStravaActivies());
+	}
+
+	private List<JourneyDto> streamDemoData() {
+		journeyRepository.findAll();
+		return null;
 	}
 
 	private List<StravaActivity> fetchStravaActivies() {
@@ -54,6 +69,7 @@ public class BackendApplication {
 				+ stravaToken);
 		log.info(allActivities.size() + " ACTIVITIES="+ ArrayUtils.toString(allActivities));
 		updateTotals(allActivities);
+		journeyRepository.saveAll(mapToSchema(allActivities));
 		return allActivities;
 	}
 
@@ -65,14 +81,17 @@ public class BackendApplication {
 		Float carbonCount = totals.getTotalCarbon();
 
 		for (StravaActivity activity : allActivities) {
-			rideCount += 1;
-			distance += normaliseDistance(activity.getDistance());
-			carbonCount += calculateCarbon(normaliseDistance(activity.getDistance()));
+			if (!journeyRepository.existsById(generateId(activity.getElapsedTime(), normaliseDistance(activity.getDistance()), activity.getName()))) {
+				rideCount += 1;
+				distance += normaliseDistance(activity.getDistance());
+				carbonCount += calculateCarbon(normaliseDistance(activity.getDistance()));
+			}
 		}
 
 		totals.setTotalRideCount(rideCount);
 		totals.setTotalDistance(distance);
 		totals.setTotalCarbon(carbonCount);
+		totalRepository.save(totals);
 	}
 
 	private List<JourneyDto> mapToDto(List<StravaActivity> activities) {
@@ -93,6 +112,38 @@ public class BackendApplication {
 		return res;
 	}
 
+	private List<Journey> mapToSchema(List<StravaActivity> activities) {
+		System.out.println(activities.size() + " ENTRIES="+ArrayUtils.toString(activities));
+		List<Journey> journeys = new ArrayList<>();
+		for (StravaActivity a : activities) {
+			int distance = normaliseDistance(a.getDistance());
+			journeys.add(new Journey(
+					generateId(a.getElapsedTime(), distance, a.getName()),
+					new Date(),
+					distance,
+					a.getElapsedTime(),
+					calculateCarbon(distance),
+					"UK", 1) );
+			if (a.getType().equals("Ride")) {
+				System.out.println("SAVING RECORD="+a.getName());
+				int d = normaliseDistance(a.getDistance());
+				journeys.add(new Journey(
+						generateId(a.getElapsedTime(), d, a.getName()),
+						new Date(),
+						d,
+						a.getElapsedTime(),
+						calculateCarbon(d),
+						"UK", 1)
+				);
+			}
+		}
+		return journeys;
+	}
+
+	private String generateId(Integer elapsedTime, Integer distance, String name) {
+		return elapsedTime + "-" + distance + name.hashCode();
+	}
+
 	private int normaliseDistance(Float d) {
 		return Math.round(d) /1000;
 	}
@@ -103,5 +154,9 @@ public class BackendApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(BackendApplication.class, args);
+	}
+
+	public void play() {
+
 	}
 }
