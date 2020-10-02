@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Journey {
     @Id
-    UUID uid;
+    String uid;
 
     @Column(name = "end_time")
     Date date;
@@ -35,4 +35,7 @@ public class Journey {
 
     @Column(name = "country")
     String country;
+
+    @Column(name = "cycle_events")
+    Integer cycleEvents;
 }

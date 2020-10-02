@@ -1,22 +1,22 @@
-com/ride4zero/backend/model/Athlete.java
- com.ride4zero.backend.model.Athlete
-com/ride4zero/backend/model/StravaActivity.java
- com.ride4zero.backend.model.StravaActivity
-com/ride4zero/backend/client/StravaApi.java
- com.ride4zero.backend.client.StravaApi
-com/ride4zero/backend/model/TotalDto.java
- com.ride4zero.backend.model.TotalDto
-com/ride4zero/backend/repository/TotalRepository.java
- com.ride4zero.backend.repository.TotalRepository
-com/ride4zero/backend/model/JourneyDto.java
- com.ride4zero.backend.model.JourneyDto
 com/ride4zero/backend/controller/MainController.java
  com.ride4zero.backend.controller.MainController
-com/ride4zero/backend/repository/JourneyRepository.java
- com.ride4zero.backend.repository.JourneyRepository
-com/ride4zero/backend/entity/Journey.java
- com.ride4zero.backend.entity.Journey
+com/ride4zero/backend/client/StravaApi.java
+ com.ride4zero.backend.client.StravaApi
 com/ride4zero/backend/entity/Total.java
  com.ride4zero.backend.entity.Total
+com/ride4zero/backend/entity/Journey.java
+ com.ride4zero.backend.entity.Journey
+com/ride4zero/backend/model/JourneyDto.java
+ com.ride4zero.backend.model.JourneyDto
 com/ride4zero/backend/BackendApplication.java
  com.ride4zero.backend.BackendApplication
+com/ride4zero/backend/model/TotalDto.java
+ com.ride4zero.backend.model.TotalDto
+com/ride4zero/backend/model/StravaActivity.java
+ com.ride4zero.backend.model.StravaActivity
+com/ride4zero/backend/repository/TotalRepository.java
+ com.ride4zero.backend.repository.TotalRepository
+com/ride4zero/backend/model/Athlete.java
+ com.ride4zero.backend.model.Athlete
+com/ride4zero/backend/repository/JourneyRepository.java
+ com.ride4zero.backend.repository.JourneyRepository
